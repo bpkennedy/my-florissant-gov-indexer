@@ -1,5 +1,14 @@
+var express = require('express');
+var app = express();
 var firebaseAdmin = require("firebase-admin");
 var algoliasearch = require('algoliasearch');
+
+app.use(express.static(__dirname + '/public'));
+
+app.get('/', function(request, response) {
+  response.render('public/index.html');
+});
+
 
 if(process.env.NODE_ENV === "production") {
   firebaseAdmin.initializeApp({
@@ -107,3 +116,9 @@ function deleteIndexRecord(dataSnapshot) {
     console.log('Firebase object deleted from Algolia', objectID);
   });
 }
+
+app.set('port', (process.env.PORT || 5000));
+
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
