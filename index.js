@@ -2,19 +2,24 @@ var firebaseAdmin = require("firebase-admin");
 var algoliasearch = require('algoliasearch');
 
 if(process.env.NODE_ENV === "production") {
-  var serviceAccount = process.env.SERVICE_ACCOUNT;
+  firebaseAdmin.initializeApp({
+    credential: admin.credential.cert({
+      "private_key": process.env.FIREBASE_PRIVATE_KEY,
+      "client_email": process.env.FIREBASE_CLIENT_EMAIL,
+    }),
+    databaseURL: process.env.FIREBASE_DATABASE_URL
+  });
 } else {
   var dotenv = require('dotenv');
   // load values from the .env file in this directory into process.env
   dotenv.load();
   var serviceAccount = require("./serviceAccountKey.json");
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL
+  });
 }
 
-// configure firebase
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
-});
 var database = firebaseAdmin.database();
 
 // configure algolia
